@@ -1,0 +1,100 @@
+CREATE WAREHOUSE Kalpana_Warehouse WITH WAREHOUSE_SIZE = 'MEDIUM' WAREHOUSE_TYPE = 'STANDARD' AUTO_SUSPEND = 600 AUTO_RESUME = TRUE COMMENT = 'Kalpana_ineuron';
+
+Use database Kalpana_ineuron;
+
+create table hospital_table (patient_id integer,
+                             patient_name varchar, 
+                             billing_address varchar,
+                             diagnosis varchar, 
+                             treatment varchar,
+                             cost number(10,2));
+                             
+CREATE or replace table KB_Britishcars_tables (
+                            InvoiceDate String,
+                            Make  Varchar2(100),
+                            CountryName Varchar2(100),
+                            SalePrice Varchar2(100),
+                            CostPrice Varchar2(100),
+                            TotalDiscount Varchar2(50),
+                            DeliveryCharge Varchar2(100),
+                            SpareParts Varchar2(100),
+                            LaborCost Varchar2(100),
+                           
+                            Model Varchar2(30),
+                            Color Varchar2(20),
+                            ReportingYear String,
+                            ReportingMonth String,
+                            Registration_Date String,
+                            VehicleType Varchar(30),
+                            InvoiceNumber Varchar2(50),
+                            CountryISOCode String,
+                            OuterPostode String,
+                            Region Varchar(50));
+                            
+                            
+SELECT * FROM KB_Britishcars_tables;
+
+
+CREATE or replace table KB_CONSUMER_COMPLAINTS
+
+(    DATE_RECEIVED STRING,
+     PRODUCT_NAME VARCHAR2(50),
+     SUB_PRODUCT VARCHAR2(100),
+     ISSUE VARCHAR2(100),
+     SUB_ISSUE VARCHAR2(100),
+     CONSUMER_COMPLAINT_NARRATIVE string,
+     Company_Public_Response STRING,
+     Company VARCHAR(100),
+     State_Name CHAR(10),
+     Zip_Code string,
+     Tags VARCHAR(40),
+     Consumer_Consent_Provided CHAR(25),
+     Submitted_via STRING,
+     Date_Sent_to_Company STRING,
+     Company_Response_to_Consumer VARCHAR(40),
+     Timely_Response CHAR(30),
+     CONSUMER_DISPUTED CHAR(20),
+     COMPLAINT_ID VARCHAR NOT NULL PRIMARY KEY
+);
+
+Select * from KB_CONSUMER_COMPLAINTS LIMIT 25;  ----TOP Keyword Will use in MYSQL
+
+Select DISTINCT * FROM KB_CONSUMER_COMPLAINTS; ---Gives Unique Values
+
+--LIKE Keyword--
+
+SELECT * from KB_CONSUMER_COMPLAINTS WHERE PRODUCT_NAME LIKE 'Bank%';
+
+
+-----Not Optimized Code----
+Select *,
+        CASE 
+            WHEN PRODUCT_NAME LIKE '%Loan%' or PRODUCT_NAME LIKE '%loan%' THEN 'Loan'
+            WHEN PRODUCT_NAME IN ('Bank account or Service', 'Mortage','Credit Card','Credit Reporting','Debt Collection') THEN 'SERVICE'
+            ELSE 'OTHER'
+         END AS FINANCIAL_TYPE
+FROM KB_CONSUMER_COMPLAINTS LIMITS 20;
+
+SELECT DISTINCT COMPANY_RESPONSE_TO_CONSUMER FROM KB_CONSUMER_COMPLAINTS WHERE COMPANY_RESPONSE_TO_CONSUMER='Untimely response';
+
+
+Select *,
+    Case 
+	WHEN COMPANY_RESPONSE_TO_CONSUMER ='Closed with explanation' THEN 'Explain'
+	WHEN COMPANY_RESPONSE_TO_CONSUMER='Closed with monetary relief' THEN 'Monetary Relief'
+	WHEN COMPANY_RESPONSE_TO_CONSUMER IN ('Closed with non-monetary relief', 'Closed') THEN 'CLOSED'
+    ELSE COMPANY_RESPONSE_TO_CONSUMER
+    END AS RESPONSE
+FROM KB_CONSUMER_COMPLAINTS WHERE COMPANY_RESPONSE_TO_CONSUMER='Untimely response';
+
+
+---GIVE THE VIEW WHICH HAVING COMBINE THE DATA OF STATE AND ZIP CODE AND ALL COLUMN WITHOUT NULL VALUES
+
+CREATE OR REPLACE VIEW KB_CONSUMER_VIEW AS
+SELECT DATE_RECEIVED,PRODUCT_NAME,SUB_PRODUCT,ISSUE,COMPANY,SUBMITTED_VIA,DATE_SENT_TO_COMPANY,TIMELY_RESPONSE,COMPLAINT_ID,
+STATE_NAME || '-' || ZIP_CODE AS STATE_ZIP
+FROM KB_CONSUMER_COMPLAINTS WHERE PRODUCT_NAME IS NOT NULL AND SUB_PRODUCT IS NOT NULL;
+
+DESCRIBE VIEW KB_CONSUMER_VIEW;
+
+SELECT * FROM KB_CONSUMER_VIEW;
