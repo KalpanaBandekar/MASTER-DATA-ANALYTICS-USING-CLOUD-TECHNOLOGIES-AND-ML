@@ -78,3 +78,46 @@ COUPON_MATCH_DISC INT,
 FOREIGN KEY (PRODUCT_ID) references PRODUCT_RAW(PRODUCT_ID),
 FOREIGN KEY (household_key) references demographic_RAW(household_key)
 );
+
+DROP TABLE MATILLION_DB.PUBLIC."Bankingdata_Unified";
+
+DELETE FROM MATILLION_DB.PUBLIC."Txn_Table" WHERE "household_key" = 351;
+
+SELECT COUNT(*) FROM MATILLION_DB.PUBLIC."Track Txn Stream";
+
+DROP TABLE MATILLION_DB.PUBLIC."Czbank_Txn";
+
+
+---Rank Speed-- 39ms
+SELECT 
+  *, 
+  RANK() OVER (PARTITION BY "BASKET_ID" 
+               ORDER BY "SALES_VALUE" DESC) AS "Sales_Value_Rank"
+FROM MATILLION_DB.PUBLIC."Txn_Table";
+
+
+
+---Row Number Speed-- 41ms
+SELECT 
+  *, 
+  ROW_NUMBER() OVER (PARTITION BY "BASKET_ID" 
+                     ORDER BY "SALES_VALUE" DESC) AS "Sales_Value_Row"
+FROM MATILLION_DB.PUBLIC."Txn_Table" ;
+
+
+---Dense Rank Speed ---37ms
+SELECT 
+  *, 
+  DENSE_RANK() OVER (PARTITION BY "BASKET_ID" 
+                     ORDER BY "SALES_VALUE" DESC) AS "Sales_Value_Dense_Rank"
+FROM MATILLION_DB.PUBLIC."Txn_Table" ;
+
+
+---Percent Rank Speed--31ms
+SELECT 
+  *, 
+    PERCENT_RANK() OVER (PARTITION BY "BASKET_ID" 
+                       ORDER BY "SALES_VALUE" DESC) AS "Sales_Value_Percent_Rank" 
+FROM MATILLION_DB.PUBLIC."Txn_Table" ;
+
+  
